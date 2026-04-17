@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASCII Webcam</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    color: #00ff41;
+    font-family: 'Courier New', monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 13px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #00ff41;
+    margin-bottom: 16px;
+    opacity: 0.7;
+  }
+
+  #controls {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  button {
+    background: transparent;
+    border: 1px solid #00ff41;
+    color: #00ff41;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    padding: 6px 16px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  button:hover { background: rgba(0,255,65,0.12); }
+
+  label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    opacity: 0.6;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  input[type=range] {
+    accent-color: #00ff41;
+    width: 90px;
+  }
+
+  #ascii-output {
+    font-family: 'Courier New', monospace;
+    font-size: 6px;
+    line-height: 1.1;
+    white-space: pre;
+    letter-spacing: 0.05em;
+    color: #00ff41;
+    background: #0a0a0a;
+    border: 1px solid rgba(0,255,65,0.15);
+    padding: 8px;
+    overflow: hidden;
+    min-width: 200px;
+    min-height: 100px;
+  }
+
+  #status {
+    margin-top: 12px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    opacity: 0.45;
+    text-transform: uppercase;
+  }
+
+  canvas { display: none; }
+</style>
+</head>
+<body>
+
+<h1>[ ASCII WEBCAM ]</h1>
+
+<div id="controls">
+  <button id="startBtn" onclick="startCam()">START CAMERA</button>
+  <button id="stopBtn" onclick="stopCam()" style="display:none">STOP</button>
+  <label>DENSITY
+    <input type="range" id="densitySlider" min="40" max="160" value="80">
+  </label>
+  <label>CONTRAST
+    <input type="range" id="contrastSlider" min="50" max="300" value="100">
+  </label>
+  <label>INVERT
+    <input type="checkbox" id="invertCheck">
+  </label>
+</div>
+
+<div id="ascii-output">Press START CAMERA to begin.</div>
+<div id="status">ready</div>
+
+<video id="video" autoplay playsinline></video>
+<canvas id="canvas"></canvas>
+
+<script src="ascii-webcam.js"></script>
+</body>
+</html>
