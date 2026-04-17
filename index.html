@@ -16,7 +16,7 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    padding: 20px;
+    padding: 16px;
   }
 
   h1 {
@@ -24,16 +24,23 @@
     letter-spacing: 0.3em;
     text-transform: uppercase;
     color: #00ff41;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     opacity: 0.7;
+    text-align: center;
   }
 
   #controls {
     display: flex;
-    gap: 16px;
+    flex-wrap: wrap;
+    gap: 10px 16px;
     align-items: center;
-    margin-bottom: 16px;
+    justify-content: center;
+    margin-bottom: 14px;
+    width: 100%;
+    max-width: 900px;
   }
+
+  #btn-group { display: flex; gap: 8px; }
 
   button {
     background: transparent;
@@ -42,11 +49,13 @@
     font-family: 'Courier New', monospace;
     font-size: 11px;
     letter-spacing: 0.15em;
-    padding: 6px 16px;
+    padding: 8px 18px;
     cursor: pointer;
     transition: background 0.15s;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
-  button:hover { background: rgba(0,255,65,0.12); }
+  button:hover, button:active { background: rgba(0,255,65,0.12); }
 
   label {
     font-size: 11px;
@@ -59,7 +68,25 @@
 
   input[type=range] {
     accent-color: #00ff41;
-    width: 90px;
+    width: 100px;
+    height: 20px;
+    cursor: pointer;
+  }
+
+  input[type=checkbox] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #00ff41;
+  }
+
+  #view {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    width: 100%;
+    align-items: flex-start;
+    justify-content: center;
   }
 
   #ascii-output {
@@ -73,12 +100,20 @@
     border: 1px solid rgba(0,255,65,0.15);
     padding: 8px;
     overflow: hidden;
-    min-width: 200px;
     min-height: 100px;
+    text-align: center;
   }
 
+  #video {
+    border: 1px solid rgba(0,255,65,0.15);
+    object-fit: fill;
+    display: none;
+  }
+
+  #video.visible { display: block; }
+
   #status {
-    margin-top: 12px;
+    margin-top: 10px;
     font-size: 10px;
     letter-spacing: 0.15em;
     opacity: 0.45;
@@ -86,6 +121,14 @@
   }
 
   canvas { display: none; }
+
+  @media (max-width: 600px) {
+    #view { flex-direction: column-reverse; }
+    h1 { font-size: 11px; letter-spacing: 0.2em; }
+    input[type=range] { width: 80px; }
+    button { padding: 8px 14px; font-size: 10px; }
+    label { font-size: 10px; }
+  }
 </style>
 </head>
 <body>
@@ -93,8 +136,10 @@
 <h1>[ ASCII WEBCAM ]</h1>
 
 <div id="controls">
-  <button id="startBtn" onclick="startCam()">START CAMERA</button>
-  <button id="stopBtn" onclick="stopCam()" style="display:none">STOP</button>
+  <div id="btn-group">
+    <button id="startBtn" onclick="startCam()">START CAMERA</button>
+    <button id="stopBtn" onclick="stopCam()" style="display:none">STOP</button>
+  </div>
   <label>DENSITY
     <input type="range" id="densitySlider" min="40" max="160" value="80">
   </label>
@@ -104,12 +149,17 @@
   <label>INVERT
     <input type="checkbox" id="invertCheck">
   </label>
+  <label>CAM VIEW
+    <input type="checkbox" id="camViewCheck" onchange="toggleCamView()">
+  </label>
 </div>
 
-<div id="ascii-output">Press START CAMERA to begin.</div>
+<div id="view">
+  <div id="ascii-output">Press START CAMERA to begin.</div>
+  <video id="video" autoplay playsinline></video>
+</div>
 <div id="status">ready</div>
 
-<video id="video" autoplay playsinline></video>
 <canvas id="canvas"></canvas>
 
 <script src="ascii-webcam.js"></script>
