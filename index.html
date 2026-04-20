@@ -14,33 +14,28 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     min-height: 100vh;
-    padding: 16px;
+    padding: 24px 16px;
+    gap: 0;
   }
 
+  /* ── Title ── */
   h1 {
     font-size: 13px;
-    letter-spacing: 0.3em;
+    letter-spacing: 0.35em;
     text-transform: uppercase;
-    color: #00ff41;
-    margin-bottom: 14px;
     opacity: 0.7;
     text-align: center;
+    margin-bottom: 16px;
   }
 
-  #controls {
+  /* ── Camera buttons ── */
+  #btn-group {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px 16px;
-    align-items: center;
+    gap: 10px;
     justify-content: center;
-    margin-bottom: 14px;
-    width: 100%;
-    max-width: 900px;
+    margin-bottom: 24px;
   }
-
-  #btn-group { display: flex; gap: 8px; }
 
   button {
     background: transparent;
@@ -49,44 +44,105 @@
     font-family: 'Courier New', monospace;
     font-size: 11px;
     letter-spacing: 0.15em;
-    padding: 8px 18px;
+    padding: 9px 22px;
     cursor: pointer;
     transition: background 0.15s;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+    text-transform: uppercase;
   }
   button:hover, button:active { background: rgba(0,255,65,0.12); }
 
-  label {
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    opacity: 0.6;
+  /* ── Controls: sliders + toggles ── */
+  #controls {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 14px;
+    margin-bottom: 24px;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .slider-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+  }
+
+  .slider-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    opacity: 0.5;
+    text-transform: uppercase;
   }
 
   input[type=range] {
-    accent-color: #00ff41;
-    width: 100px;
-    height: 20px;
-    cursor: pointer;
-  }
-
-  input[type=checkbox] {
-    width: 16px;
-    height: 16px;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    max-width: 260px;
+    height: 2px;
+    background: rgba(0,255,65,0.25);
+    outline: none;
     cursor: pointer;
     accent-color: #00ff41;
   }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #00ff41;
+    cursor: pointer;
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #00ff41;
+    border: none;
+    cursor: pointer;
+  }
 
+  /* ── Toggle buttons ── */
+  .toggle-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .toggle-btn {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 7px 16px;
+    border: 1px solid rgba(0,255,65,0.35);
+    background: transparent;
+    color: rgba(0,255,65,0.4);
+    cursor: pointer;
+    transition: all 0.15s;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .toggle-btn.on {
+    background: rgba(0,255,65,0.12);
+    border-color: #00ff41;
+    color: #00ff41;
+  }
+
+  /* ── Views ── */
   #view {
     display: flex;
     flex-direction: row;
     gap: 12px;
-    width: 100%;
     align-items: flex-start;
     justify-content: center;
+    width: 100%;
   }
 
   #ascii-output {
@@ -100,68 +156,92 @@
     border: 1px solid rgba(0,255,65,0.15);
     padding: 8px;
     overflow: hidden;
-    min-height: 100px;
     text-align: center;
   }
+
+  /* Placeholder shown before camera starts */
+  #cam-placeholder {
+    border: 1px solid rgba(0,255,65,0.15);
+    background: #0a0a0a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  #cam-placeholder span {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    opacity: 0.2;
+    text-transform: uppercase;
+  }
+  #cam-placeholder.hidden { display: none; }
 
   #video {
     border: 1px solid rgba(0,255,65,0.15);
     object-fit: fill;
     display: none;
+    flex-shrink: 0;
   }
-
   #video.visible { display: block; }
 
+  /* ── Status ── */
   #status {
-    margin-top: 10px;
+    margin-top: 12px;
     font-size: 10px;
     letter-spacing: 0.15em;
-    opacity: 0.45;
+    opacity: 0.35;
     text-transform: uppercase;
+    text-align: center;
   }
 
   canvas { display: none; }
 
+  /* ── Mobile ── */
   @media (max-width: 600px) {
-    #view { flex-direction: column-reverse; }
-    h1 { font-size: 11px; letter-spacing: 0.2em; }
-    input[type=range] { width: 80px; }
-    button { padding: 8px 14px; font-size: 10px; }
-    label { font-size: 10px; }
+    #view {
+      flex-direction: column;
+      align-items: center;
+    }
   }
 </style>
 </head>
 <body>
 
-<h1>[ ASCII WEBCAM ]</h1>
+<h1>[ ASCII Webcam ]</h1>
+
+<div id="btn-group">
+  <button id="startBtn" onclick="startCam()">Start Camera</button>
+  <button id="stopBtn" onclick="stopCam()" style="display:none">Stop</button>
+</div>
 
 <div id="controls">
-  <div id="btn-group">
-    <button id="startBtn" onclick="startCam()">START CAMERA</button>
-    <button id="stopBtn" onclick="stopCam()" style="display:none">STOP</button>
-  </div>
-  <label>DENSITY
+  <div class="slider-row">
+    <span class="slider-label">Density</span>
     <input type="range" id="densitySlider" min="40" max="160" value="80">
-  </label>
-  <label>CONTRAST
+  </div>
+  <div class="slider-row">
+    <span class="slider-label">Contrast</span>
     <input type="range" id="contrastSlider" min="50" max="300" value="100">
-  </label>
-  <label>INVERT
-    <input type="checkbox" id="invertCheck">
-  </label>
-  <label>CAM VIEW
-    <input type="checkbox" id="camViewCheck" onchange="toggleCamView()">
-  </label>
+  </div>
+  <div class="slider-row">
+    <span class="slider-label">Gamma</span>
+    <input type="range" id="gammaSlider" min="20" max="300" value="100">
+  </div>
+  <div class="toggle-group">
+    <button class="toggle-btn" id="invertBtn" onclick="toggleInvert()">Invert</button>
+    <button class="toggle-btn" id="camViewBtn" onclick="toggleCamView()">Cam View</button>
+  </div>
 </div>
 
 <div id="view">
-  <div id="ascii-output">Press START CAMERA to begin.</div>
+  <div id="ascii-output">Press Start Camera to begin.</div>
+  <div id="cam-placeholder"><span>no signal</span></div>
   <video id="video" autoplay playsinline></video>
 </div>
+
 <div id="status">ready</div>
 
 <canvas id="canvas"></canvas>
-
 <script src="ascii-webcam.js"></script>
 </body>
 </html>
