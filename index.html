@@ -16,7 +16,135 @@
     align-items: center;
     min-height: 100vh;
     padding: 24px 16px;
-    gap: 0;
+  }
+
+  /* ── Hamburger ── */
+  #hamburger {
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 1000;
+    background: transparent;
+    border: 1px solid rgba(0,255,65,0.4);
+    color: #00ff41;
+    font-size: 16px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    letter-spacing: 0;
+    transition: background 0.15s;
+    touch-action: manipulation;
+  }
+  #hamburger:hover { background: rgba(0,255,65,0.1); }
+
+  /* ── Drawer ── */
+  #drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100%;
+    background: #0d0d0d;
+    border-right: 1px solid rgba(0,255,65,0.15);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    padding: 60px 20px 30px;
+    gap: 20px;
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+  }
+  #drawer.open { transform: translateX(0); }
+
+  #drawer-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 998;
+    background: rgba(0,0,0,0.5);
+  }
+  #drawer-overlay.open { display: block; }
+
+  .drawer-title {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    opacity: 0.4;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .slider-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .slider-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    opacity: 0.5;
+    text-transform: uppercase;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 2px;
+    background: rgba(0,255,65,0.25);
+    outline: none;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #00ff41;
+    cursor: pointer;
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #00ff41;
+    border: none;
+    cursor: pointer;
+  }
+
+  .toggle-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .toggle-btn {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    border: 1px solid rgba(0,255,65,0.35);
+    background: transparent;
+    color: rgba(0,255,65,0.4);
+    cursor: pointer;
+    transition: all 0.15s;
+    touch-action: manipulation;
+    text-align: left;
+  }
+  .toggle-btn.on {
+    background: rgba(0,255,65,0.12);
+    border-color: #00ff41;
+    color: #00ff41;
+  }
+
+  .drawer-divider {
+    border: none;
+    border-top: 1px solid rgba(0,255,65,0.1);
   }
 
   /* ── Title ── */
@@ -37,7 +165,7 @@
     margin-bottom: 24px;
   }
 
-  button {
+  button.cam-btn {
     background: transparent;
     border: 1px solid #00ff41;
     color: #00ff41;
@@ -51,89 +179,7 @@
     -webkit-tap-highlight-color: transparent;
     text-transform: uppercase;
   }
-  button:hover, button:active { background: rgba(0,255,65,0.12); }
-
-  /* ── Controls: sliders + toggles ── */
-  #controls {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 24px;
-    width: 100%;
-    max-width: 320px;
-  }
-
-  .slider-row {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    width: 100%;
-  }
-
-  .slider-label {
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    opacity: 0.5;
-    text-transform: uppercase;
-  }
-
-  input[type=range] {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    max-width: 260px;
-    height: 2px;
-    background: rgba(0,255,65,0.25);
-    outline: none;
-    cursor: pointer;
-    accent-color: #00ff41;
-  }
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #00ff41;
-    cursor: pointer;
-  }
-  input[type=range]::-moz-range-thumb {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #00ff41;
-    border: none;
-    cursor: pointer;
-  }
-
-  /* ── Toggle buttons ── */
-  .toggle-group {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .toggle-btn {
-    font-family: 'Courier New', monospace;
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 7px 16px;
-    border: 1px solid rgba(0,255,65,0.35);
-    background: transparent;
-    color: rgba(0,255,65,0.4);
-    cursor: pointer;
-    transition: all 0.15s;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .toggle-btn.on {
-    background: rgba(0,255,65,0.12);
-    border-color: #00ff41;
-    color: #00ff41;
-  }
+  button.cam-btn:hover, button.cam-btn:active { background: rgba(0,255,65,0.12); }
 
   /* ── Views ── */
   #view {
@@ -159,7 +205,6 @@
     text-align: center;
   }
 
-  /* Placeholder shown before camera starts */
   #cam-placeholder {
     border: 1px solid rgba(0,255,65,0.15);
     background: #0a0a0a;
@@ -196,25 +241,44 @@
 
   canvas { display: none; }
 
+  /* ── Fullscreen tweaks ── */
+  :fullscreen body,
+  :-webkit-full-screen body {
+    justify-content: center;
+    padding: 0;
+  }
+  :fullscreen #view,
+  :-webkit-full-screen #view {
+    height: 100vh;
+    align-items: center;
+  }
+  :fullscreen h1,
+  :fullscreen #btn-group,
+  :fullscreen #status,
+  :-webkit-full-screen h1,
+  :-webkit-full-screen #btn-group,
+  :-webkit-full-screen #status {
+    display: none;
+  }
+
   /* ── Mobile ── */
   @media (max-width: 600px) {
-    #view {
-      flex-direction: column;
-      align-items: center;
-    }
+    #view { flex-direction: column; align-items: center; }
   }
 </style>
 </head>
 <body>
 
-<h1>[ ASCII Webcam ]</h1>
+<!-- Hamburger button -->
+<button id="hamburger" onclick="toggleDrawer()" title="Menu">&#9776;</button>
 
-<div id="btn-group">
-  <button id="startBtn" onclick="startCam()">Start Camera</button>
-  <button id="stopBtn" onclick="stopCam()" style="display:none">Stop</button>
-</div>
+<!-- Drawer overlay -->
+<div id="drawer-overlay" onclick="closeDrawer()"></div>
 
-<div id="controls">
+<!-- Drawer -->
+<div id="drawer">
+  <span class="drawer-title">Controls</span>
+
   <div class="slider-row">
     <span class="slider-label">Density</span>
     <input type="range" id="densitySlider" min="40" max="160" value="80">
@@ -227,10 +291,22 @@
     <span class="slider-label">Gamma</span>
     <input type="range" id="gammaSlider" min="20" max="300" value="100">
   </div>
+
+  <hr class="drawer-divider">
+
   <div class="toggle-group">
-    <button class="toggle-btn" id="invertBtn" onclick="toggleInvert()">Invert</button>
-    <button class="toggle-btn" id="camViewBtn" onclick="toggleCamView()">Cam View</button>
+    <button class="toggle-btn" id="invertBtn"   onclick="toggleInvert()">Invert</button>
+    <button class="toggle-btn" id="camViewBtn"  onclick="toggleCamView()">Cam View</button>
+    <button class="toggle-btn" id="fullscreenBtn" onclick="toggleFullscreen()">Fullscreen</button>
   </div>
+</div>
+
+<!-- Main content -->
+<h1>[ ASCII Webcam ]</h1>
+
+<div id="btn-group">
+  <button class="cam-btn" id="startBtn" onclick="startCam()">Start Camera</button>
+  <button class="cam-btn" id="stopBtn"  onclick="stopCam()" style="display:none">Stop</button>
 </div>
 
 <div id="view">
