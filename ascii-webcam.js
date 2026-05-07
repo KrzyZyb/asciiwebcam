@@ -117,39 +117,41 @@ function renderLoop() {
   const isFS     = !!(document.fullscreenElement || document.webkitFullscreenElement);
   const isMobile = window.innerWidth < 600;
   const maxCols  = isMobile ? 60 : 160;
-  const cols     = Math.min(parseInt(document.getElementById('densitySlider').value), maxCols);
   const aspect   = 0.55;
+  const maxRows  = Math.round(maxCols * (video.videoHeight / video.videoWidth) * aspect);
+  const cols     = Math.min(parseInt(document.getElementById('densitySlider').value), maxCols);
   const rows     = Math.round(cols * (video.videoHeight / video.videoWidth) * aspect);
 
-  canvas.width  = cols;
-  canvas.height = rows;
-  ctx.drawImage(video, 0, 0, cols, rows);
+  // Always sample at maxCols x maxRows — stride picks every Nth pixel
+  // so lower density = bigger blocks but same overall image size
+  canvas.width  = maxCols;
+  canvas.height = maxRows;
+  ctx.drawImage(video, 0, 0, maxCols, maxRows);
 
-  const pixels   = ctx.getImageData(0, 0, cols, rows).data;
+  const pixels   = ctx.getImageData(0, 0, maxCols, maxRows).data;
   const chars    = invertOn ? CHARS_LIGHT : CHARS_DARK;
   const len      = chars.length - 1;
   const contrast = parseInt(document.getElementById('contrastSlider').value) / 100;
   const gamma    = parseInt(document.getElementById('gammaSlider').value) / 100;
 
-  // In fullscreen: no padding — just raw cols chars, CSS centers the block.
-  // In normal mode: pad lines to maxCols so window size stays constant.
-  const pad        = isFS ? 0 : maxCols - cols;
-  const leftPad    = Math.floor(pad / 2);
-  const rightPad   = pad - leftPad;
-  const emptyLeft  = ' '.repeat(leftPad);
-  const emptyRight = ' '.repeat(rightPad);
+  // Stride: how many canvas pixels each output character represents
+  const strideX = maxCols / cols;
+  const strideY = maxRows / rows;
+
+  // No space-padding — explicit width/height + CSS centers everything
   let out = '';
 
   for (let r = 0; r < rows; r++) {
-    out += emptyLeft;
+    const srcRow = Math.floor(r * strideY);
     for (let c = 0; c < cols; c++) {
-      const i = (r * cols + c) * 4;
+      const srcCol = Math.floor(c * strideX);
+      const i = (srcRow * maxCols + srcCol) * 4;
       let b = (pixels[i] * 0.299 + pixels[i+1] * 0.587 + pixels[i+2] * 0.114) / 255;
       b = Math.pow(Math.max(0, b), 1 / gamma);
       b = Math.max(0, Math.min(1, (b - 0.5) * contrast + 0.5));
       out += chars[Math.round(b * len)];
     }
-    out += emptyRight + '\n';
+    out += '\n';
   }
 
   output.textContent = out;
@@ -160,16 +162,21 @@ function renderLoop() {
     const fsByH  = window.innerHeight / (rows * 1.1);
     const fsFont = Math.max(4, Math.min(fsByW, fsByH));
     output.style.fontSize = fsFont + 'px';
-    // Lock output width to exactly cols chars wide so it never overflows or drifts
-    output.style.width = (cols * fsFont * 0.6) + 'px';
+    output.style.width    = (cols * fsFont * 0.6) + 'px';
+    output.style.height   = '';
     document.body.style.overflow = 'hidden';
   } else {
     const availableW = (camViewOn && !isMobile)
       ? (window.innerWidth - 80) / 2
       : Math.min(window.innerWidth - 32, 900);
-    const fs = Math.max(4, Math.min(10, (availableW / maxCols) * 0.62));
+    const availableH = availableW / (maxCols / maxRows) / 0.6 * 1.1;
+    // Font scales inversely with cols: fewer chars = bigger font, same total size
+    const fsByW = availableW / (cols * 0.6);
+    const fsByH = availableH / (rows * 1.1);
+    const fs    = Math.max(4, Math.min(fsByW, fsByH));
     output.style.fontSize = fs + 'px';
-    output.style.width = '';  // let normal mode size itself from content
+    output.style.width    = (cols * fs * 0.6) + 'px';
+    output.style.height   = (rows * fs * 1.1) + 'px';
     document.body.style.overflow = '';
   }
 
