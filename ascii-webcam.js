@@ -131,9 +131,11 @@ function renderLoop() {
   const contrast = parseInt(document.getElementById('contrastSlider').value) / 100;
   const gamma    = parseInt(document.getElementById('gammaSlider').value) / 100;
 
-  const pad       = maxCols - cols;
-  const leftPad   = Math.floor(pad / 2);
-  const rightPad  = pad - leftPad;
+  // In fullscreen: no padding — just raw cols chars, CSS centers the block.
+  // In normal mode: pad lines to maxCols so window size stays constant.
+  const pad        = isFS ? 0 : maxCols - cols;
+  const leftPad    = Math.floor(pad / 2);
+  const rightPad   = pad - leftPad;
   const emptyLeft  = ' '.repeat(leftPad);
   const emptyRight = ' '.repeat(rightPad);
   let out = '';
@@ -152,22 +154,23 @@ function renderLoop() {
 
   output.textContent = out;
 
-  // In fullscreen, fill the screen height; otherwise use window width
-  let availableW;
   if (isFS) {
-    const availableH = window.innerHeight;
-    const charH = parseFloat(output.style.fontSize || 6) * 1.1;
-    const fsRows = Math.round(maxCols * (video.videoHeight / video.videoWidth) * aspect);
-    const fsByH  = availableH / (fsRows * 1.1);
-    const fsByW  = (window.innerWidth - (camViewOn ? window.innerWidth / 2 : 0)) / maxCols / 0.6;
-    const fsFont = Math.min(fsByH, fsByW);
-    output.style.fontSize = Math.max(4, fsFont) + 'px';
+    const fsW    = camViewOn ? window.innerWidth / 2 : window.innerWidth;
+    const fsByW  = fsW / (cols * 0.6);
+    const fsByH  = window.innerHeight / (rows * 1.1);
+    const fsFont = Math.max(4, Math.min(fsByW, fsByH));
+    output.style.fontSize = fsFont + 'px';
+    // Lock output width to exactly cols chars wide so it never overflows or drifts
+    output.style.width = (cols * fsFont * 0.6) + 'px';
+    document.body.style.overflow = 'hidden';
   } else {
     const availableW = (camViewOn && !isMobile)
       ? (window.innerWidth - 80) / 2
       : Math.min(window.innerWidth - 32, 900);
     const fs = Math.max(4, Math.min(10, (availableW / maxCols) * 0.62));
     output.style.fontSize = fs + 'px';
+    output.style.width = '';  // let normal mode size itself from content
+    document.body.style.overflow = '';
   }
 
   syncPanelSizes();
